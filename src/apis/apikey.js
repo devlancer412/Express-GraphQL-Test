@@ -2,7 +2,7 @@ const Router = require("express").Router;
 const router = new Router();
 const db = require("../db/model");
 const md5 = require("md5")
-
+// generate api key
 const generateApiKey = (length) => {
   var result           = '';
   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -14,6 +14,7 @@ const generateApiKey = (length) => {
 }
 
 router.get('/new', async (req, res) => {
+  // generate api key and expried time
   const newKey = generateApiKey(10);
   const hashed = md5(newKey);
   console.log(hashed);
@@ -21,6 +22,7 @@ router.get('/new', async (req, res) => {
   cd.setDate(cd.getDate() + 1);
   const expiredTime = cd.getTime();
 
+  // save to database
   try {
     await db.models.apiKeys.sync();
     await db.models.apiKeys.create({

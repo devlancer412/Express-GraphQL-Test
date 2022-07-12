@@ -10,7 +10,7 @@ var APIKeys = cfg.config.db.define( 'apikeys', {
 		type: Sequelize.NUMBER,
 		field: 'expired_time'
 	}
-} , {
+},{
 	timestamps: true
 });
 

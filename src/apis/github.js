@@ -4,13 +4,11 @@ const g = require('graphql-request')
 require("dotenv").config();
 
 const { GraphQLClient, gql } = g;
-
+// github graphql api endpoint url
 const url = 'https://api.github.com/graphql';
-
-// Do not have your token in a string in your code, especially if you use source control
-// https://medium.com/codait/environment-variables-or-keeping-your-secrets-secret-in-a-node-js-app-99019dfff716
+// github access token
 const TOKEN = process.env.GITHUB_TOKEN;
-// Create the graphQL client
+// get github GraphQLClient from access token
 const graphQLClient = new GraphQLClient(url, {
       headers: {
         authorization: `Bearer ${TOKEN}`,
@@ -18,13 +16,14 @@ const graphQLClient = new GraphQLClient(url, {
     });
 
 router.get('/commits', async (req, res) => {
+  // getting query parameters
   let {after, first, before, last} = req.query
 
   after = after?after:null;
   before = before?before:null;
   first = first?first:10;
   last = last?last:null;
-  // The query that gets profile information
+  // build graphql queries
   let query;
   if (before&&last != null) {
     query = before?gql`
@@ -200,14 +199,11 @@ router.get('/commits', async (req, res) => {
   // Make Graphql call
   const githubRes = await graphQLClient.request(query);
 
-  // const commits = githubRes.repository.refs.edges.reduce((a, b) => {
-  //   // console.log(a, b.node.target.history.edges)
-  //   return a.concat(b.node.target.history.edges)
-  // }, []).map(item => item);
-
+  // filter data
   const commits = githubRes.repository.defaultBranchRef.target.history.edges.map(commit => commit.node);
   const startCursor = githubRes.repository.defaultBranchRef.target.history.edges[0].cursor;
 
+  // return data type
   returnValue ={
     ...githubRes.repository.defaultBranchRef.target.history.pageInfo,
     commits,

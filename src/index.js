@@ -11,11 +11,8 @@ const app = express();
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
-
 // parse application/json
 app.use(bodyParser.json())
-
-const port = 8080;
 
 app.use(cors());
 
@@ -25,6 +22,8 @@ app.get('/', (req, res) => {
 
 app.use(apiRouter);
 
+const port = process.env.PORT | 8080;
+
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Server is running at http://localhost:${process.env.PORT}`);
 });
